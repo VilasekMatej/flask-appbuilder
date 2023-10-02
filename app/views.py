@@ -6,7 +6,7 @@ from flask_appbuilder.models.group import aggregate_count
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from . import appbuilder, db
-from .models import Contact, ContactGroup, Gender
+from .models import Contact, ContactGroup, Gender, ChildGroup, Child
 
 
 def fill_gender():
@@ -34,6 +34,7 @@ class ContactModelView(ModelView):
                     "birthday",
                     "personal_phone",
                     "personal_celphone",
+                    "note",
                 ],
                 "expanded": False,
             },
@@ -50,6 +51,7 @@ class ContactModelView(ModelView):
                     "birthday",
                     "personal_phone",
                     "personal_celphone",
+                    "note",
                 ],
                 "expanded": False,
             },
@@ -66,6 +68,64 @@ class ContactModelView(ModelView):
                     "birthday",
                     "personal_phone",
                     "personal_celphone",
+                    "note",
+                ],
+                "expanded": False,
+            },
+        ),
+    ]
+
+class ChildModelView(ModelView):
+    datamodel = SQLAInterface(Child)
+
+    list_columns = ["name", "personal_celphone", "birthday", "contact_group.name"]
+
+    base_order = ("name", "asc")
+    show_fieldsets = [
+        ("Summary", {"fields": ["name", "gender", "contact_group"]}),
+        (
+            "Personal Info",
+            {
+                "fields": [
+                    "address",
+                    "birthday",
+                    "personal_phone",
+                    "personal_celphone",
+                    "note",
+                ],
+                "expanded": False,
+            },
+        ),
+    ]
+
+    add_fieldsets = [
+        ("Summary", {"fields": ["name", "gender", "contact_group"]}),
+        (
+            "Personal Info",
+            {
+                "fields": [
+                    "address",
+                    "birthday",
+                    "personal_phone",
+                    "personal_celphone",
+                    "note",
+                ],
+                "expanded": False,
+            },
+        ),
+    ]
+
+    edit_fieldsets = [
+        ("Summary", {"fields": ["name", "gender", "contact_group"]}),
+        (
+            "Personal Info",
+            {
+                "fields": [
+                    "address",
+                    "birthday",
+                    "personal_phone",
+                    "personal_celphone",
+                    "note",
                 ],
                 "expanded": False,
             },
@@ -76,6 +136,9 @@ class ContactModelView(ModelView):
 class GroupModelView(ModelView):
     datamodel = SQLAInterface(ContactGroup)
     related_views = [ContactModelView]
+
+class ChildGroupModelView(ModelView):
+    datamodel = SQLAInterface(ChildGroup)
 
 
 def pretty_month_year(value):
@@ -117,6 +180,16 @@ appbuilder.add_view(
 )
 appbuilder.add_view(
     ContactModelView, "List Contacts", icon="fa-envelope", category="Contacts"
+)
+appbuilder.add_view(
+    ChildGroupModelView,
+    "Child Groups",
+    icon="fa-folder-open-o",
+    category="Contacts",
+    category_icon="fa-envelope",
+)
+appbuilder.add_view(
+    ChildModelView, "List Childs", icon="fa-envelope", category="Contacts"
 )
 appbuilder.add_separator("Contacts")
 appbuilder.add_view(
